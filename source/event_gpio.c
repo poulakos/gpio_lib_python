@@ -375,7 +375,7 @@ void *poll_thread(void *threadarg)
             {
                 gettimeofday(&tv_timenow, NULL);
                 timenow = tv_timenow.tv_sec*1E6 + tv_timenow.tv_usec;
-                if (g->bouncetime == -666 || timenow - g->lastcall > g->bouncetime*1000 || g->lastcall == 0 || g->lastcall > timenow)
+                if (g->bouncetime == -666 || timenow - g->lastcall > (unsigned int)g->bouncetime*1000 || g->lastcall == 0 || g->lastcall > timenow)
 				{
                     g->lastcall = timenow;
                     event_occurred[g->gpio] = 1;
@@ -441,7 +441,7 @@ void event_cleanup(unsigned int gpio)
 
     while (g != NULL)
 	{
-        if ((gpio == -666) || (g->gpio == gpio))
+        if (((int)gpio == -666) || ((unsigned int)g->gpio == gpio))
 		{
             temp = g->next;
 		}
@@ -491,10 +491,10 @@ int add_edge_detect(unsigned int gpio, unsigned int edge, int bouncetime)
         g->edge = edge;
         g->bouncetime = bouncetime;
     } 
-	else if (i == edge) // get existing event
+	else if (i == (int)edge) // get existing event
 	{  
         g = get_gpio(gpio);
-        if ((bouncetime != -666 && g->bouncetime != bouncetime) ||  // different event bouncetime used
+        if ((bouncetime != -666 && (int)g->bouncetime != bouncetime) ||  // different event bouncetime used
             (g->thread_added))                // event already added
             return 1;
     } 
@@ -545,7 +545,7 @@ int blocking_wait_for_edge(unsigned int gpio, unsigned int edge, int bouncetime)
 
     // add gpio if it has not been added already
     ed = gpio_event_added(gpio);
-    if (ed == edge)  // get existing record
+    if ((unsigned)ed == edge)  // get existing record
 	{  
         g = get_gpio(gpio);
         if (g->bouncetime != -666 && g->bouncetime != bouncetime)
@@ -600,7 +600,7 @@ int blocking_wait_for_edge(unsigned int gpio, unsigned int edge, int bouncetime)
 		{
             gettimeofday(&tv_timenow, NULL);
             timenow = tv_timenow.tv_sec*1E6 + tv_timenow.tv_usec;
-            if (g->bouncetime == -666 || timenow - g->lastcall > g->bouncetime*1000 || g->lastcall == 0 || g->lastcall > timenow)
+            if (g->bouncetime == -666 || timenow - g->lastcall > (unsigned int)g->bouncetime*1000 || g->lastcall == 0 || g->lastcall > timenow)
 			{
                 g->lastcall = timenow;
                 finished = 1;

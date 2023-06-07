@@ -5,9 +5,9 @@ ASUS PYTHON GPIO LIB README
 git clone https://github.com/TinkerBoard/gpio_lib_python.git
 
 #Build\
- sudo apt-get install python-dev python2.7-dev python3-dev\
+ sudo apt-get install python3.9 python3.9-dev\
  cd ASUS_GPIO_PYTHON_PATH/gpio/\
- sudo python setup.py install
+ sudo CFLAGS="-fcommon" python3 setup.py install
 
 #A Simple Python Program\
  import ASUS.GPIO as GPIO\

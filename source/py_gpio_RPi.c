@@ -273,11 +273,11 @@ static PyObject *py_setup_channel(PyObject *self, PyObject *args, PyObject *kwar
 		return NULL;
 		chanlist = NULL;
 	} 
-	else if PyList_Check(chanlist) 
+	else if (PyList_Check(chanlist))
 	{
 		// do nothing
 	} 
-	else if PyTuple_Check(chanlist) 
+	else if (PyTuple_Check(chanlist))
 	{
 		chantuple = chanlist;
 		chanlist = NULL;
@@ -655,7 +655,7 @@ static unsigned int chan_from_gpio(unsigned int gpio)
 	else
 		chans = 40;
 	for (chan=1; chan<=chans; chan++)
-		if (*(*pin_to_gpio+chan) == gpio)
+		if (*(*pin_to_gpio+chan) == (int)gpio)
 			return chan;
 	return -1;
 }
@@ -1070,8 +1070,12 @@ PyMODINIT_FUNC initGPIO(void)
 #endif
 	Py_INCREF(&PWMType);
 	PyModule_AddObject(module, "PWM", (PyObject*)&PWMType);
+
+#if PY_MAJOR_VERSION < 3 || PY_MINOR_VERSION < 7
 	if (!PyEval_ThreadsInitialized())
 		PyEval_InitThreads();
+#endif
+
 	// register exit functions - last declared is called first
 	if (Py_AtExit(cleanup) != 0)
 	{
